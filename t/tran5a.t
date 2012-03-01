@@ -1,41 +1,21 @@
-#!/usr/bin/perl -I../lib -I..
+#!/usr/bin/perl -I../lib
 
-BEGIN {unshift(@INC, eval { my $x = $INC[0]; $x =~ s!/OOPS(.*)/blib/lib$!/OOPS$1/t!g ? $x : ()})}
-BEGIN {
-	$OOPS::SelfFilter::defeat = 1
-		unless defined $OOPS::SelfFilter::defeat;
-}
-
-
+use FindBin;
+use lib $FindBin::Bin;
+use OOPS::TestSetup qw(:filter :inactivity Test::MultiFork Time::HiRes);
 use OOPS qw($transfailrx);
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
 use strict;
 use warnings;
 use diagnostics;
-
 use OOPS::TestCommon;
 use Clone::PP qw(clone);
+use Time::HiRes qw(sleep);
+use Test::MultiFork qw(stderr bail_on_bad_plan);
 
+nocon;
 modern_data_compare();
-BEGIN {
-	nocon;
-
-	unless (eval { require Test::MultiFork}) {
-		print "1..0 # Skip this test requires Test::MultiFork\n";
-		exit;
-	};
-	unless (eval { require Time::HiRes}) {
-		print "1..0 # Skip this test requires Time::HiRes\n";
-		exit;
-	};
-
-	import Time::HiRes qw(sleep);
-
-	$Test::MultiFork::inactivity = 60; 
-	import Test::MultiFork qw(stderr bail_on_bad_plan);
-}
-
 
 my $looplength = 1000;
 $looplength /= 10 unless $ENV{OOPSTEST_SLOW};

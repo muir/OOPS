@@ -1,12 +1,7 @@
-#!/usr/bin/perl -I../lib -I..
+#!/usr/bin/perl -I../lib
 
-BEGIN {unshift(@INC, eval { my $x = $INC[0]; $x =~ s!/OOPS(.*)/blib/lib$!/OOPS$1/t!g ? $x : ()})}
-BEGIN {
-	$OOPS::SelfFilter::defeat = 1
-		unless defined $OOPS::SelfFilter::defeat;
-}
-
-
+use FindBin;
+use lib $FindBin::Bin qw(:filter Clone::PP);
 use OOPS;
 use OOPS::GC;
 use Carp qw(confess);
@@ -15,9 +10,7 @@ use strict;
 use warnings;
 use diagnostics;
 use Digest::MD5 qw(md5_hex);
-
 use OOPS::TestCommon;
-use Clone::PP qw(clone);
 
 print "1..2423\n";
 

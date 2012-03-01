@@ -1,36 +1,16 @@
-#!/usr/bin/perl -I../lib -I..
+#!/usr/bin/perl -I../lib
 
-BEGIN {unshift(@INC, eval { my $x = $INC[0]; $x =~ s!/OOPS(.*)/blib/lib$!/OOPS$1/t!g ? $x : ()})}
-BEGIN {
-	$OOPS::SelfFilter::defeat = 1
-		unless defined $OOPS::SelfFilter::defeat;
-}
-BEGIN {
-	if ($ENV{HARNESS_ACTIVE} && ! $ENV{OOPSTEST_SLOW}) {
-		print "1..0 # Skip run this by hand or set \$ENV{OOPSTEST_SLOW}\n";
-		exit;
-	}
-}
-BEGIN {
-	for my $m (qw(Data::Dumper Clone::PP)) {
-		unless ( eval " require $m " ) {
-			print "1..0 # Skip this test requires the $m module\n";
-			exit;
-		}
-		$m->import();
-	}
-}
-
-import Clone::PP qw(clone);
-
+use FindBin;
+use lib $FindBin::Bin;
+use OOPS::TestSetup qw(:filter :slow Data::Dumper Clone::PP);
 use OOPS;
+use OOPS::TestCommon;
+use Clone::PP qw(clone);
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
 use strict;
 use warnings;
 use diagnostics;
-
-use OOPS::TestCommon;
 
 print "1..3183\n";
 

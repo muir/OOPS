@@ -1,11 +1,11 @@
-#!/usr/bin/perl -I../lib -I./..
+#!/usr/bin/perl -I../lib
 
 my $dbi_trace_turnon = 9999999999;
 my $dbi_trace_level = 0;
 
 use FindBin;
 use lib $FindBin::Bin;
-use OOPS::TestSetup qw(:slow :filter Data::Dumper Clone::PP);
+use OOPS::TestSetup qw(:slow :filter :sqlite Data::Dumper Clone::PP);
 use OOPS;
 require Carp::Heavy;
 use Carp qw(confess);
@@ -13,13 +13,6 @@ use Scalar::Util qw(reftype);
 use strict;
 use warnings;
 use OOPS::TestCommon;
-
-BEGIN	{
-	unless ($dbms =~ /sqlite/) {
-		print "1..0 # Skip this test is for DBD::SQLite only\n";
-		exit;
-	}
-}
 
 modern_data_compare();
 

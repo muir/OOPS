@@ -1,12 +1,8 @@
-#!/usr/bin/perl -I../lib -I..
+#!/usr/bin/perl -I../lib
 
-BEGIN {unshift(@INC, eval { my $x = $INC[0]; $x =~ s!/OOPS(.*)/blib/lib$!/OOPS$1/t!g ? $x : ()})}
-BEGIN {
-	$OOPS::SelfFilter::defeat = 1
-		unless defined $OOPS::SelfFilter::defeat;
-}
-
-
+use FindBin;
+use lib $FindBin::Bin;
+use OOPS::TestSetup qw(:filter Test::MultiFork Time::HiRes :inactivity);
 use OOPS qw($transfailrx);
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
@@ -15,6 +11,8 @@ use warnings;
 use diagnostics;
 use OOPS::TestCommon;
 use Clone::PP qw(clone);
+use Time::HiRes qw(sleep);
+use Test::MultiFork qw(stderr bail_on_bad_plan);
 
 my $looplength = 1000;
 $looplength /= 20 unless $ENV{OOPSTEST_SLOW};
@@ -22,21 +20,6 @@ $OOPS::debug_dbidelay = 0;
 $debug = 0;
 
 modern_data_compare();
-BEGIN {
-	unless (eval { require Test::MultiFork}) {
-		print "1..0 # Skip this test requires Test::MultiFork\n";
-		exit;
-	};
-	unless (eval { require Time::HiRes}) {
-		print "1..0 # Skip this test requires Time::HiRes\n";
-		exit;
-	};
-
-	import Time::HiRes qw(sleep);
-
-	$Test::MultiFork::inactivity = 60;
-	import Test::MultiFork qw(stderr bail_on_bad_plan);
-}
 
 sub sum;
 

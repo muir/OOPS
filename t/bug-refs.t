@@ -1,10 +1,7 @@
 #!/usr/bin/perl 
 
-BEGIN {unshift(@INC, eval { my $x = $INC[0]; $x =~ s!/OOPS(.*)/blib/lib$!/OOPS$1/t!g ? $x : ()})}
 use warnings;
 use strict;
-
-
 use Scalar::Util qw(refaddr reftype blessed);
 use Test::More tests => 6;
 

@@ -1,26 +1,12 @@
-#!/usr/bin/perl -I../lib -I..
+#!/usr/bin/perl -I../lib
 
-BEGIN {unshift(@INC, eval { my $x = $INC[0]; $x =~ s!/OOPS(.*)/blib/lib$!/OOPS$1/t!g ? $x : ()})}
-BEGIN {
-	$OOPS::SelfFilter::defeat = 1
-		unless defined $OOPS::SelfFilter::defeat;
-}
-BEGIN {
-	if ($ENV{HARNESS_ACTIVE} && ! $ENV{OOPSTEST_SLOW}) {
-		print "1..0 # Skip run this by hand or set \$ENV{OOPSTEST_SLOW}\n";
-		exit;
-	}
-	if ($ENV{OOPSTEST_DSN} && $ENV{OOPSTEST_DSN} !~ /^dbi:(mysql|pg|sqlite)\b/i) {
-		print "1..0 # Skip only mysql, PostgreSQL, and SQLite supported by OOPS 1.001\n";
-		exit;
-	}
-}
-
+use FindBin;
+use lib $FindBin::Bin;
+use OOPS::TestSetup qw(:filter :slow :mysql :pg :sqlite);
 use OOPS::TestCommon;
 use strict;
 use warnings;
 use diagnostics;
-
 use Clone::PP qw(clone);
 use Data::Compare;
 

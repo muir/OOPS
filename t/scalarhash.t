@@ -1,39 +1,21 @@
-#!/usr/bin/perl -I../lib -I..
+#!/usr/bin/perl -I../lib
 
-BEGIN {unshift(@INC, eval { my $x = $INC[0]; $x =~ s!/OOPS(.*)/blib/lib$!/OOPS$1/t!g ? $x : ()})}
-BEGIN {
-	$OOPS::SelfFilter::defeat = 1
-		unless defined $OOPS::SelfFilter::defeat;
-}
-BEGIN {
-	unless ( eval { require 5.008003 } ) {
-		print "1..0 # Skip perl 5.8.3 required for scalar(%tied_hash) to work\n";
-		exit;
-	}
-}
-BEGIN {
-	for my $m (qw(Data::Dumper Clone::PP Data::Compare)) {
-		unless ( eval " require $m " ) {
-			print "1..0 # Skip this test requires the $m module\n";
-			exit;
-		}
-		$m->import();
-	}
-}
-
-import Clone::PP qw(clone);
-import Data::Compare;
-
+use FindBin;
+use lib $FindBin::Bin;
+use OOPS::TestSetup qw(:filter 5.000803 Data::Dumper Clone::PP Data::Compare);
+use OOPS::TestCommon;
 use OOPS;
+
+use Clone::PP qw(clone);
+use Data::Compare;
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
 use strict;
 use warnings;
 use diagnostics;
 
-use OOPS::TestCommon;
-
 modern_data_compare();
+
 print "1..1691\n";
 
 resetall; # --------------------------------------------------
