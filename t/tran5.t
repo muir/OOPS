@@ -2,7 +2,7 @@
 
 use FindBin;
 use lib $FindBin::Bin;
-use OOPS::TestSetup qw(:filter Test::MultiFork Time::HiRes :inactivity);
+use OOPS::TestSetup qw(:filter :inactivity Test::MultiFork Time::HiRes);
 use OOPS qw($transfailrx);
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
@@ -18,8 +18,6 @@ my $looplength = 1000;
 $looplength /= 20 unless $ENV{OOPSTEST_SLOW};
 $OOPS::debug_dbidelay = 0;
 $debug = 0;
-
-modern_data_compare();
 
 sub sum;
 

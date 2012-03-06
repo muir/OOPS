@@ -15,7 +15,6 @@ use Time::HiRes qw(sleep);
 use Test::MultiFork qw(stderr bail_on_bad_plan);
 
 nocon;
-modern_data_compare();
 
 my $looplength = 1000;
 $looplength /= 10 unless $ENV{OOPSTEST_SLOW};

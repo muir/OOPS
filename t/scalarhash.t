@@ -2,19 +2,15 @@
 
 use FindBin;
 use lib $FindBin::Bin;
-use OOPS::TestSetup qw(:filter 5.000803 Data::Dumper Clone::PP Data::Compare);
+use OOPS::TestSetup qw(:filter 5.000803 Data::Dumper Clone::PP);
 use OOPS::TestCommon;
 use OOPS;
-
 use Clone::PP qw(clone);
-use Data::Compare;
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
 use strict;
 use warnings;
 use diagnostics;
-
-modern_data_compare();
 
 print "1..1691\n";
 
@@ -160,7 +156,7 @@ sub sdocompare
 		return 0;
 	}
 
-	my $r = Compare($x, $y);
+	my $r = compare($x, $y);
 	return $r if $r;
 
 	my $c1 = ref2string($x);

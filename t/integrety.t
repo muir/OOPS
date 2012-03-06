@@ -13,10 +13,7 @@ use diagnostics;
 use Clone::PP qw(clone);
 use Data::Dumper;
 
-modern_data_compare();
-
 print "1..2204\n";
-
 
 resetall; # --------------------------------------------------
 if (0) {

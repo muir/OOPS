@@ -12,8 +12,6 @@ use Carp qw(confess);
 use Scalar::Util qw(reftype);
 use OOPS::TestCommon;
 
-modern_data_compare();
-
 print "1..27\n";
 
 resetall; # --------------------------------------------------

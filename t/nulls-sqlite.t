@@ -13,10 +13,7 @@ use Scalar::Util qw(reftype);
 use strict;
 use warnings;
 use OOPS::TestCommon;
-
-modern_data_compare();
-
-import Clone::PP qw(clone);
+use Clone::PP qw(clone);
 
 my $skipto = 0; # go directly to test number...
 

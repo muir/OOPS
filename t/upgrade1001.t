@@ -8,7 +8,6 @@ use strict;
 use warnings;
 use diagnostics;
 use Clone::PP qw(clone);
-use Data::Compare;
 
 our $oldver;
 $oldver = 1001 unless defined $oldver;
@@ -18,7 +17,6 @@ eval " OOPS::OOPS${oldver}->import; ";
 die $@ if $@;
 use strict;
 
-modern_data_compare();
 print "1..459\n";
 
 sub selector {

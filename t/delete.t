@@ -16,7 +16,6 @@ use warnings;
 use diagnostics;
 use Digest::MD5 qw(md5_hex);
 
-modern_data_compare();
 print "1..363\n";
 
 sub selector {

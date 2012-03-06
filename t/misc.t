@@ -3,17 +3,14 @@
 use FindBin;
 use lib $FindBin::Bin;
 use OOPS::TestSetup qw(:filter :slow Data::Dumper Clone::PP);
-import Clone::PP qw(clone);
+use Clone::PP qw(clone);
 use OOPS;
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
 use strict;
 use warnings;
 use diagnostics;
-
 use OOPS::TestCommon;
-
-modern_data_compare();
 
 print "1..7872\n";
 

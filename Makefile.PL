@@ -17,7 +17,8 @@ WriteMakefile(
 		'Filter::Util::Call' => 0,
 	},
 	BUILD_REQUIRES => {
-		diagnostics	=> 0,
+		'diagnostics'	=> 0,
+		'Test::Deep'	=> 0,
 	},
 );
 

@@ -1,7 +1,8 @@
 #!/usr/bin/perl -I../lib
 
 use FindBin;
-use lib $FindBin::Bin qw(:filter Clone::PP);
+use lib $FindBin::Bin;
+use OOPS::TestSetup qw(:filter Clone::PP);
 use OOPS;
 use OOPS::GC;
 use Carp qw(confess);
@@ -13,8 +14,6 @@ use Digest::MD5 qw(md5_hex);
 use OOPS::TestCommon;
 
 print "1..2423\n";
-
-modern_data_compare();
 
 my $common;
 $debug = 0;

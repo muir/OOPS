@@ -19,6 +19,7 @@ package OOPS::TestCommon;
 	test
 	samesame
 	docompare
+	compare
 	qcheck
 	showpos
 	max
@@ -41,7 +42,6 @@ package OOPS::TestCommon;
 	cs8compare
 	rvsamesame
 	ref2string
-	modern_data_compare
 	check_resources
 	safeout
 	betterkeys
@@ -56,24 +56,17 @@ package OOPS::TestCommon;
 	);
 @ISA = qw(Exporter);
 
-BEGIN {
-	for my $m (qw(Data::Compare Clone::PP BSD::Resource)) {
-		unless ( eval " require $m " ) {
-			print "1..0 # Skipped: this test requires the $m module\n";
-			exit;
-		}
-		$m->import();
-	}
-}
-
+use OOPS::TestSetup qw(Data::Difference Clone::PP BSD::Resource);
 use OOPS;
 use OOPS::Setup;
-# import Clone::PP qw(clone); 
 use Carp::Heavy; # weird error sometimes w/o this
 use Carp qw(confess);
 use Scalar::Util qw(reftype refaddr);
 use Data::Dumper;
 use strict;
+use BSD::Resource;
+use Test::Deep qw(eq_deeply);
+use Clone::PP;
 require Exporter;
 
 select(STDOUT);
@@ -152,6 +145,12 @@ $OOPS::bigcutoff = 50;
 $OOPS::sqlite::big_blob_size = 60;
 our $ocut = $OOPS::bigcutoff;
 our $bbs = $OOPS::sqlite::big_blob_size;
+
+sub compare
+{
+	my ($a, $b) = @_;
+	return eq_deeply($a, $b);
+}
 
 sub eline
 {
@@ -334,45 +333,17 @@ sub samesame
 sub docompare
 {
 	my ($x, $y) = @_;
-	my $r = Data::Compare::Compare($x, $y);
+
+	my $r = compare($x, $y);
 	return $r if $r;
 
-#	my $x1 = Dumper($x);
-#	my $x2 = Dumper($y);
-#	return 1 if $x1 eq $x2;
-#	safeout "# x1=$x1\nx2=$x2\n" if $debug;
-#	
-#	require YAML;
-#	my $y1 = YAML::Dump($x);
-#	my $y2 = YAML::Dump($y);
-#	return 1 if $y1 eq $y2;
-#	safeout "# y1=\n$y1\ny2=\n$y2\n" if $debug;
-#
-#	require Data::Dump;
-#	my $b1 = Data::Dump::dump($x);
-#	my $b2 = Data::Dump::dump($y);
-#	return 1 if $b1 eq $b2;
-#	safeout "# b1=$b1\nb2=$b2\n" if $debug;
-#
 	my $c1 = ref2string($x);
 	my $c2 = ref2string($y);
 	return 1 if $c1 eq $c2;
+
+	print "USED-REF2STRING-COMPARE\n";
 	safeout "# c1=$c1\n# c2=$c2\n" if $debug;
-#
-#	use Data::XDumper;
-#	my $z1 = Data::XDumper::Dump($x);
-#	my $z2 = Data::XDumper::Dump($y);
-#	safeout "# z1=$z1\nz2=$z2\n" if $debug;
-
 	return 0;
-}
-
-sub modern_data_compare
-{
-	# 0.02 bad, 0.10 good, don't know about in-betwen
-	return 1 if $Data::Compare::VERSION >= 0.10;  
-	print "1..0 # Skipped: Data::Compare too out-of-date, may recurse forever\n";
-	exit 0;
 }
 
 our $resource_check_magic_number = 100;

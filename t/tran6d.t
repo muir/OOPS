@@ -14,8 +14,6 @@ use Clone::PP qw(clone);
 
 use Test::MultiFork qw(stderr bail_on_bad_plan);
 
-modern_data_compare();
-
 my $itarations = 200;
 $itarations /= 10 unless $ENV{OOPSTEST_SLOW};
 if ($ENV{OOPSTEST_DSN} && $ENV{OOPSTEST_DSN} =~ /^dbi:mysql/i) {

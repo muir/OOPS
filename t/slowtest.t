@@ -14,8 +14,6 @@ use Clone::PP qw(clone);
 
 my $skipto = 0;
 
-modern_data_compare();
-
 print "1..245574\n";
 
 my $debug2 = 1;

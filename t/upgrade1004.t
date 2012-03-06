@@ -8,10 +8,7 @@ use strict;
 use warnings;
 use diagnostics;
 use Clone::PP qw(clone);
-use Data::Compare;
 use Data::Dumper;
-
-modern_data_compare();
 
 our $oldver;
 $oldver = 1004 unless defined $oldver;

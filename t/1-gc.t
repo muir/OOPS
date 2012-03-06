@@ -1,7 +1,7 @@
 #!/usr/bin/perl -I../lib
 
 use FindBin;
-use $FindBin::Bin;
+use lib $FindBin::Bin;
 use OOPS::TestSetup qw(:filter Test::MultiFork :inactivity Clone::PP);
 use OOPS;
 use OOPS::GC;
@@ -16,8 +16,6 @@ use Clone::PP qw(clone);
 use Test::MultiFork qw(stderr bail_on_bad_plan);
 
 die $Test::MultiFork::VERSION unless $Test::MultiFork::VERSION >= 0.7;
-
-modern_data_compare();
 
 BEGIN	{
 	if ($DBD::SQLite::VERSION >= 1.0 && $ENV{HARNESS_ACTIVE}) {

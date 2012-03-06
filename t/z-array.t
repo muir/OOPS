@@ -12,7 +12,6 @@ use diagnostics;
 use OOPS::TestCommon;
 
 my $edebug;
-modern_data_compare();
 
 print "1..5753\n";
 

@@ -47,22 +47,14 @@ package OOPS::OOPS1003::TestCommon;
 	);
 @ISA = qw(Exporter);
 
-BEGIN {
-	for my $m (qw(Data::Compare Clone::PP)) {
-		unless ( eval " require $m " ) {
-			print "1..0 # Skipped: this test requires the $m module\n";
-			exit;
-		}
-		$m->import();
-	}
-}
-
+use OOPS::TestSetup qw(Clone::PP Test::Deep);
 use OOPS::OOPS1003;
 use OOPS::OOPS1003::Setup;
 import Clone::PP qw(clone); 
 use Carp qw(confess);
 use Scalar::Util qw(reftype refaddr);
 use Data::Dumper;
+use Test::Deep qw(eq_deeply);
 use strict;
 require Exporter;
 
@@ -254,48 +246,16 @@ sub samesame
 	russian_roulette($err, $err);
 }
 
-
-#	http://search.cpan.org/~fdaly/Test-Deep-0.084/lib/Test/Deep.pod
-#	http://search.cpan.org/~mgraham/Palm-Progect-2.0.1/mlib/Test/More.pm
-#	http://search.cpan.org/~pdenis/Data-Structure-Util-0.09/lib/Data/Structure/Util.pm
-#	http://search.cpan.org/~ilyaz/etext.1.6.3/eText/utils/FreezeThaw.pm
-#	http://search.cpan.org/~xmath/Data-XDumper-1.03/XDumper.pm
-#	http://search.cpan.org/~jzucker/SQL-Statement-1.005/lib/SQL/Parser.pm
-#	http://search.cpan.org/~gaas/Data-Dump-1.02/lib/Data/Dump.pm
-#	http://search.cpan.org/~clkao/Data-Hierarchy-0.17/Hierarchy.pm
-#	http://search.cpan.org/~jbrown/PHP-Serialization-0.27/lib/PHP/Serialization.pm
-#	http://search.cpan.org/~ingy/Data-Denter-0.15/Denter.pod
-#	http://search.cpan.org/~ingy/YAML-0.30/YAML.pod
-
 sub docompare
 {
 	my ($x, $y) = @_;
-	my $r = Data::Compare::Compare($x, $y);
+	my $r = eq_deeply($x, $y);
 	return $r if $r;
-
-	#my $x1 = Dumper($x);
-	#my $x2 = Dumper($y);
-	#return 1 if $x1 eq $x2;
-	##print "x1=$x1\nx2=$x2\n";
-	
-	#my $y1 = YAML::Dump($x);
-	#my $y2 = YAML::Dump($y);
-	#return 1 if $y1 eq $y2;
-	##print "y1=\n$y1\ny2=\n$y2\n";
-
-	#my $b1 = Data::Dump::dump($x);
-	#my $b2 = Data::Dump::dump($y);
-	#return 1 if $b1 eq $b2;
-	#print "b1=$b1\nb2=$b2\n";
 
 	my $c1 = ref2string($x);
 	my $c2 = ref2string($y);
 	return 1 if $c1 eq $c2;
 	print "c1=$c1\nc2=$c2\n";
-
-	#my $z1 = Data::XDumper::Dump($x);
-	#my $z2 = Data::XDumper::Dump($y);
-	#print "z1=$z1\nz2=$z2\n"; 
 
 	return 0;
 }

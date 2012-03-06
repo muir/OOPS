@@ -1,3 +1,9 @@
+
+	Tests:
+		Removed BEGIN {} blocks from all tests.
+
+		Swtiched from Data::Compare to Test::Deep.
+
 2008/03/05 - 0.2004 - mysql improvement
 	
 	Mysql:

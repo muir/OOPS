@@ -13,8 +13,6 @@ use OOPS::TestCommon;
 use Clone::PP qw(clone);
 use Test::MultiFork qw(stderr bail_on_bad_plan);
 
-modern_data_compare();
-
 # 
 # This forces a deadlock and then simulates the
 # retry that would normally be handled by 

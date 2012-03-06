@@ -1,0 +1,66 @@
+#!/usr/bin/perl
+
+my $perl = "/usr/local/bin/perl";
+
+use strict;
+use warnings;
+use File::OldSlurp;
+use aliased 'Proc::JobQueue::Command';
+use Proc::JobQueue::BackgroundQueue;
+
+# list backends to test
+my @db = qw(mysql sqlite sqlite2);
+
+# number at once
+my $n = 3;
+
+my $results = "results";
+
+my $keep = @ARGV;
+
+my %db = (
+	mysql	=> "DBI:mysql:database=rectangle;host=localhost",
+	pg	=> "dbi:Pg:dbname=rectangle",
+	sqlite	=> "DBI:SQLite:dbname=/tmp/sqlite.XXXX.db",
+	sqlite2	=> "DBI:SQLite2:dbname=/tmp/sqlite2.XXXX.db",
+);
+
+$ENV{OOPSTEST_USER} = "muir";
+$ENV{OOPSTEST_PASS} ="jungle";
+$ENV{OOPSTEST_SLOW} = "okay";
+
+my $counter = "T000";
+
+my $time;
+if (-e "/usr/bin/time") {
+	my $uname = `uname`;
+	if ($uname =~ /Linux/) {
+		$time = "/usr/bin/time -v";
+	} elsif ($uname =~ /DragonFly/) {
+		$time = "/usr/bin/time -hl";
+	} else {
+		$time = ""
+	}
+} else {
+	$time = "";
+}
+
+my $queue = Proc::JobQueue::BackgroundQueue->new(jobs_per_host => $n);
+
+for my $t (read_dir("t")) {
+	next unless $t =~ /\.t$/;
+	for my $db (@db) {
+		if ($keep && -e "$results/$db.$t") {
+			next;
+		}
+		unlink("$results/$db.$t");
+		my $dsn = $db{$db};
+		$counter++;
+		$dsn =~ s/XXXX/$counter/;
+		my $job = Command->new("env OOPSTEST_DSN=$dsn OOPSTEST_PREFIX=$counter $time $perl -Ilib t/$t > $results/$db.$t 2>&1");
+		$queue->add($job);
+	}
+}
+
+$queue->finish();
+

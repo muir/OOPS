@@ -12,8 +12,6 @@ use strict;
 use warnings;
 use Clone::PP qw(clone);
 
-modern_data_compare();
-
 my $skipto = 0;
 
 print "1..58818\n";

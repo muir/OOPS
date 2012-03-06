@@ -2,7 +2,7 @@
 
 use FindBin;
 use lib $FindBin::Bin;
-use OOPS::TestSetup qw(:filter :inactivity Test::Multifork);
+use OOPS::TestSetup qw(:filter :inactivity Test::MultiFork);
 use OOPS;
 use Carp qw(confess);
 use Scalar::Util qw(reftype);
@@ -12,8 +12,6 @@ use diagnostics;
 use OOPS::TestCommon;
 use Clone::PP qw(clone);
 use Test::MultiFork qw(stderr bail_on_bad_plan);
-
-modern_data_compare();
 
 my $itarations = 200;
 $itarations /= 10 unless $ENV{OOPSTEST_SLOW};

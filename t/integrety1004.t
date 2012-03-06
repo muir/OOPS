@@ -12,10 +12,7 @@ use strict;
 use warnings;
 use diagnostics;
 
-modern_data_compare();
-
 print "1..2204\n";
-
 
 resetall; # --------------------------------------------------
 if (0) {
