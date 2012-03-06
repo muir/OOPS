@@ -85,7 +85,7 @@ BEGIN	{
 	$test_dsn = $ENV{OOPSTEST_DSN};
 
 	unless ($test_dsn || eval { require DBD::SQLite } ) {
-		print "1..0 # Skipped: this test requires \$OOPSTEST_DSN to be set or DBD::SQLite to be installed\n";
+		print "1..0 # skip: this test requires \$OOPSTEST_DSN to be set or DBD::SQLite to be installed\n";
 		exit 0;
 	}
 }

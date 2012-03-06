@@ -28,6 +28,18 @@ sub tmode
 	}
 }
 
+#
+# Error code that indicates deadlock or clashing transactions.
+#
+sub deadlock_rx
+{
+	return (
+		qr/ERROR:  could not serialize access due to concurrent update/,
+		qr/ERROR:  deadlock detected/,
+		qr/ERROR:  duplicate key violates unique constraint/,
+	);
+}
+
 sub initialize
 {
 	my ($dbo) = @_;

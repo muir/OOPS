@@ -25,6 +25,15 @@ our $invocations = 0;
 
 sub tmode {}
 
+sub deadlock_rx
+{
+	return (
+		qr/database is locked/,
+		qr/database is locked\(\d+\) at dbdimp\.c line /,
+		qr/unable to open database file\(\d+\) at dbdimp\.c line/,
+	);
+}
+
 sub initialize
 {
 	my $dbo = shift;

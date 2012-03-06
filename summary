@@ -24,7 +24,7 @@ foreach my $file (@files) {
     print "Todo passed\n";
   } elsif ($parser->passed) {
     print "ok\n";
-  } elsif ($parser->skipped) {
+  } elsif ($parser->skip_all) {
     print "Skipped\n";
   } else {
     print "????\n";

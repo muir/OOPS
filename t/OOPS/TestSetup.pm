@@ -33,7 +33,7 @@ sub import
 			$Test::MultiFork::inactivity = 60;
 		} elsif ($a eq ':slow') {
 			if ($ENV{HARNESS_ACTIVE} && ! $ENV{OOPSTEST_SLOW}) {
-				print "1..0 # Skip run this by hand or set \$ENV{OOPSTEST_SLOW}\n";
+				print "1..0 # skip run this by hand or set \$ENV{OOPSTEST_SLOW}\n";
 				exit;
 			}
 		} elsif ($a =~ /^:(.+)/) {
@@ -46,14 +46,14 @@ sub import
 			}
 		} else {
 			unless ( eval " require $a " ) {
-				print "1..0 # Skip this test requires the $a module\n";
+				print "1..0 # skip this test requires the $a module\n";
 				exit;
 			}
 		}
 	}
 
 	if (@supported && ! $dbicheck) {
-		print "1..0 # Skip test requires " . join(" or ", @supported) . "\n";
+		print "1..0 # skip test requires " . join(" or ", @supported) . "\n";
 		exit;
 	}
 }

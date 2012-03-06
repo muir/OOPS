@@ -26,6 +26,19 @@ sub tmode
 	$tmode->execute() || die $dbh->errstr;
 }
 
+#
+# These are the error codes that mysql returns when it deadlocks or has
+# clashing transactions.
+#
+sub deadlock_rx
+{
+	return (
+		qr/Deadlock found when trying to get lock/,
+		qr/Lock wait timeout exceeded; try restarting transaction/,
+		qr/:Duplicate entry/,
+	);
+}
+
 sub initialize
 {
 	my $dbo = shift;

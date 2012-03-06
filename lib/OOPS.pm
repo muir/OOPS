@@ -72,27 +72,8 @@ our @transaction_rollback;
 our $dbi_bug_workaround_count_debug = 0;
 our $gc_overflow_id = 4;
 
-#
-# How do you know the database is deadlocked?
-#
-#	mysql		
-#			Deadlock found when trying to get lock
-#			Lock wait timeout exceeded; try restarting transaction
-# 	 		:Duplicate entry
-#
-#	PostgreSQL	
-#			ERROR:  could not serialize access due to concurrent update
-#			ERROR:  deadlock detected
-#			ERROR:  duplicate key violates unique constraint
-#
-#	SQLite3		
-#			database is locked\(1\) at dbdimp.c line 
-#			database is locked\(5\) at dbdimp.c line 
-#			unable to open database file\(1\) at dbdimp.c  (Random failure, doesn't mean deadlock)
-#
-#			
-
-our $transfailrx = qr/Deadlock found when trying to get lock|ERROR:  could not serialize access due to concurrent update|database is locked\(\d+\) at dbdimp\.c line |unable to open database file\(\d+\) at dbdimp\.c line|ERROR:  deadlock detected|Lock wait timeout exceeded; try restarting transaction|ERROR:  duplicate key violates unique constraint|:Duplicate entry/;
+# This gets updated by OOPS::DBO as backends are used
+our $transfailrx = qr/^wont^match^anything^yet/;
 
 our $id_alloc_size = 10;
 
@@ -409,6 +390,11 @@ END
 
 	return $oops if $args{no_front_end};
 	return OOPS::FrontEnd->new($oops);
+}
+
+sub dbms
+{
+	return OOPS::DBO::dbms(@_);
 }
 
 sub dbiconnect
