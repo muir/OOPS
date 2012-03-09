@@ -34,9 +34,15 @@ sub deadlock_rx
 {
 	return (
 		qr/Deadlock found when trying to get lock/,
+		qr/Deadlock found when trying to get lock; try restarting transaction/,
 		qr/Lock wait timeout exceeded; try restarting transaction/,
 		qr/:Duplicate entry/,
 	);
+}
+
+sub nodata_rx
+{
+	return qr/Table '\S+object' doesn't exist/;
 }
 
 sub initialize
@@ -147,20 +153,11 @@ sub clean_query
 	my ($dbo, $query) = @_;
 	if ($query =~ /\bSELECT\b/i && ! $dbo->{readyonly}) {
 		$query =~ s/;//;
-		# $query .= " LOCK IN SHARE MODE";
-		# $query .= " FOR UPDATE";
 		if ($dbo->{mysql_for_update}) {
-			# great
-		} elsif (defined $dbo->{mysql_for_update}) {
-			$query .= " FOR UPDATE";
-		} else {
-			warn "dbo->mysql_for_update not defined";
-			# This needs to be turned back on -- it's off 'cause
-			# tran3.t is falling though to here
-			# $query .= " FOR UPDATE";
+			$query .= " FOR UPDATE"
+				unless $query =~ / FOR UPDATE\s*/;
 		}
 	}
-	1 while $query =~ s/  +/ /g;  # query log is easier to debug
 	return $dbo->SUPER::clean_query($query);
 }
 
@@ -252,6 +249,5 @@ sub byebye
 	my $dbo = shift;
 	$dbo->{counterdbh}->disconnect() if $dbo->{counterdbh};
 }
-
 
 1;

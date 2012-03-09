@@ -550,7 +550,7 @@ END
 		$q = $dbo->adhoc_query(<<END);
 			UPDATE TP_object
 			SET loadgroup = 5
-			WHERE virtual = 0
+			WHERE virtual = '0'
 END
 	} else {
 		confess;

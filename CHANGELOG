@@ -1,8 +1,45 @@
 
+2012/03/07 - 0.2005 - refresh and retest
+
+	License:
+
+		Now under the Artistic License instead of GPL.
+		
+	Changes:
+
+		The $OOPS::transfailrx regular expression for matching
+		database errors that should be retried is now built 
+		dynamically based on which backends are used.
+
 	Tests:
 		Removed BEGIN {} blocks from all tests.
 
 		Swtiched from Data::Compare to Test::Deep.
+	
+	Postgreql:
+		
+		Fixed issue with PG_BYTEA not being defined.
+
+		With version 9.1 the text of some error messages is
+		changed from version 8.3
+
+		With version 9.1, 'virtual' is now a keyword so
+		the column virtual must now be written `virtual`.
+
+		With version 9.1, even less auto-conversion happens
+		so 0 != '0'.
+
+	SQLite:
+		
+		Error messages for SQLite version 2 have changed a bit.
+
+		Bugfix: missing lock_object() method added.
+	
+	Documentation:
+
+		Section on alternatives removed as it's obsolete.
+		Bug bounty removed.
+
 
 2008/03/05 - 0.2004 - mysql improvement
 	

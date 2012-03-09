@@ -8,7 +8,7 @@ use File::OldSlurp;
 
 my @files = sort(read_dir("results"));
 
-my $aggregate = TAP::Parser::Aggregator->new;
+# my $aggregate = TAP::Parser::Aggregator->new;
 foreach my $file (@files) {
   my $s =  TAP::Parser::Source->new;
   $s->source([ '/bin/cat', "results/$file" ]);
@@ -16,22 +16,26 @@ foreach my $file (@files) {
   while ( my $result = $parser->next ) {
     # print "$file results: $result->as_string\n";
   }
-  $aggregate->add( $file, $parser );
+  # $aggregate->add( $file, $parser );
   printf "%-30s ", $file;
   if ($parser->failed) {
     print "Failed\n";
   } elsif ($parser->todo_passed) {
     print "Todo passed\n";
-  } elsif ($parser->passed) {
-    print "ok\n";
   } elsif ($parser->skip_all) {
     print "Skipped\n";
+  } elsif (! $parser->is_good_plan) {
+    printf "Planned %d, ran %d\n", $parser->tests_planned, $parser->tests_run;
+  } elsif ($parser->passed) {
+    print "ok\n";
   } else {
     print "????\n";
   }
 }
 
-print "\nTOTAL\n";
-printf "\n\tPassed: %s\n\tFailed: %s\n", scalar $aggregate->passed, scalar $aggregate->failed;
+# print "\nTOTAL\n";
+# printf "\n\tPassed: %s\n\tFailed: %s\n", scalar $aggregate->passed, scalar $aggregate->failed;
+
+print "DONE\n";
 
 

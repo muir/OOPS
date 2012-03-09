@@ -1,5 +1,4 @@
 CHANGELOG
-COPYING
 lib/OOPS/DBOdebug.pm
 lib/OOPS/DBO.pm
 lib/OOPS/Fsck.pm

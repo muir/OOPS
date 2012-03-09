@@ -54,6 +54,8 @@ TODO: {
 		"creating a reference creates a key");
 }
 
+exit(0);
+
 package Hash1;
 
 sub TIEHASH

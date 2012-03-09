@@ -38,7 +38,7 @@
 
 =head1 DESCRIPTION
 
-The goal of OOPS is to make perl objects transparently persistent.
+The goal of OOPS is to make perl objects easily and transparently persistent.
 OOPS handles deeply nested and cross-linked objects -- even object
 hierarchies that are too large to fit in memory and (with a hint)
 individual hash tables that are too large for memory.  Objects will be
@@ -73,7 +73,7 @@ At this time, OOPS is expecting a web-like work flow:
  exit
 
 If you need more than one transaction in a program, create more than
-one OOPS instance. 
+one OOPS instance.
 
 To make your data persistent, make a reference to your data from the
 OOPS object.  To later retrieve your data, simply access it through the
@@ -102,31 +102,34 @@ OOPS object.
 
 =head1 SUPPORTED DATA TYPES
 
-Perl HASHes, REFs, SCALARs, and ARRAYs are supported.  Currently, HASH
-keys may not be longer than 255 characters.  Class names may not be more
-than 128 characters long.  References to hash keys and array elements
-are supported.
+Perl blessed and unblessed HASHes, REFs, SCALARs, and ARRAYs are supported.
+Currently, HASH keys may not be longer than 255 characters.  Class names may
+not be more than 128 characters long.  References to hash keys and array
+elements are supported.
 
 At the current time, large ARRAYs are not efficient.  Use HASHes instead
 if this matters to you.  References to array elements and hash values
 are not efficient.
 
-Large HASHes are supported by only loading keys that are accessed.
+Large HASHes are supported by only loading keys as tehy are accessed.
 
 HASHes, array elements, and REFs are implemented with tie().  ARRAYs are
 not currently tie()d because of bugs in perl.  Multiple references to the
 same scalar are supported.  References to array elements and hash values
 are supported.	Persistent data is reference counted and cycles must be
-manually broken to assure de-allocation.
+manually broken to assure de-allocation.  A persistent data garbage
+collector L<OOPS::GC> is supplied if you cannot guarantee to break your
+own cycles.
 
 =head1 SUPPORTED PLATFORMS
 
-The following RDBMSs are supported by the code:
+Support for the following RDBMSs are is included:
 
 =over 15
 
 =item PostgreSQL
 
+OOPS 0.2005 has been tested with PostgreSQL version 9.1.3 on Linux.
 OOPS 0.2002 has been tested with PostgreSQL version 8.1.8 on Linux.  
 OOPS 0.1004 was tested with PostgreSQL version 8.1.4 on Linux.	
 OOPS 0.1003 was tested with 7.4.2 and 7.3.5 on Linux and 7.3.5 on
@@ -146,6 +149,7 @@ if you are not using C<transaction()>.
 
 =item mysql
 
+OOPS 0.2005 has been tested with mysql 5.1.46 on Linux.
 OOPS 0.2003 has been tested with mysql 5.0.45 on Linux.
 OOPS 0.2002 has been tested with mysql 5.0.22 on Linux.
 OOPS 0.1004 has been tested with mysql 4.1.15 on Linux.
@@ -203,7 +207,7 @@ L<http://rt.cpan.org/Ticket/Display.html?id=20288>.
 
 =back
 
-Perl versions 5.8.2 through 5.8.7 are supported.  Prior to 5.8.2, it wasn't
+Perl versions 5.8.2 through 5.12.1 are supported.  Prior to 5.8.2, it wasn't
 possible to untie scalars from within the a tied scalar access method.
 An ugly workaround is possible if there is enough interest.
 
@@ -567,7 +571,7 @@ This may be handled automatically in the future.
 
 =item C<-E<gt>workaround27555($reference)>
 
-References to tied hash keys are buggy in all perls through 5.8.7 (and
+References to tied hash keys are buggy in all perls through 5.12.1 (and
 beyond?).  Use workaround27555($reference) to register your new tied
 hash key references so that they can be transformed into references that
 actually work correctly.
@@ -607,46 +611,29 @@ consistentcy within the OOPS data, it can be useful for transactions
 that have external side-effects like sending an email.	In theory, if you
 pre-lock everything you might change, your transaction will not need to
 be rolled back due to deadlock.  When you lock an object, it is the object
-record that is locked, not the contents.  Locking C<\%hash> won't another
+record that is locked, not the contents.  Locking C<\%hash> won't stop another
 process from modifying C<$hash-E<gt>{key}>.  Lock C<\$hash-E<gt>{key}>
 if you want that.
 
 =back
 
-=head1 LIMITATIONS, ERRATA, DEVELOPMENT STATUS, COMMUNITY, BUGS, AND BUG BOUNTY
+=head1 LIMITATIONS, ERRATA, DEVELOPMENT STATUS, BUGS
 
 OOPS has been thoroughly tested.  The regression suite is very well
 developed: there is twice as much code in the test suite as there is in
-the module itself.  The suite does over 1.5million tests.  On my fastest
-computer it takes over six hours to run.  I have so much confidence in
-my test suite, I'm offering a bounty on bugs!
-
-=head2 Bug Bounty
-
-I'll pay (via paypal) US$5.00 to anyone who submits a new bug (with
-regression test) that is caused by a problem in my OOPS module.
-To qualify, bugs must be serious: they must cause data corruption,
-false results, or program failure. Bugs must not be listed here or
-be *caused* by using a versions of perl, modules, or RDBMSs that are
-not explicitly supported.
-
-I'll report the number of bounties paid in the CHANGELOG.
-
-=head2 Community
-
-There is a mailing list for OOPS.  Send a message to 
-oops-subscribe@idiom.com to subscribe.
+the module itself.  The suite does over 1.5million tests.  
+I have so much confidence in my test suite, I'm offering a bounty on bugs!
 
 =head2 Limitations
 
-OOPS caches in memory bit of data that is pulled in during a transaction.
+OOPS caches in memory all data that is pulled in during a transaction.
 For C<virtual_object> hash'es only, there are ways to prevent absolutely
 everything from being cached (the C<less_caching> contructor agrument and
 the C<clear_cache> method) but for other objects you need to have enough
 memory to hold everything you touch.
 
 You can only call -E<gt>commit once per OOPS instance.	The cache is 
-emptied when the OOPS instance is destroyed.  Together this means that
+emptied when the OOPS instance is destroyed.  This means that
 OOPS will be loading up its cache over and over.
 
 =head2 Known bugs in OOPS
@@ -659,7 +646,7 @@ OOPS currently has memory leaks. This may or may not matter to your
 application.  The rate of leakage varies depending on which RDBMS is
 used.  SQLite seems to have the most significant problems.  Most of
 the leaks are not in OOPS itself but in the modules it uses and thus
-are not easily fixed by the OOPS developers.
+are not easily addressed by changing OOPS.
 
 =item delayed DESTROY
 
@@ -690,19 +677,17 @@ is no reference to the scalar.	The following code prints C<true>.
  print "true\n" if $z eq 'baz';
 
 At the current time, OOPS does not store such blessings.  OOPS does
-remember blessings when there isn't a reference.
+not remember blessings when there isn't a reference.
 
 =item re-blessing the OOPS object
 
-If you re-bless the OOPS object, your data is likely to become
-inaccessible.  I list this here so nobody claims a bounty for breaking
-OOPS in this way.
+Reblessing the OOPS object is not supported.
 
 =item DBD::Pg and ASCII NULL
 
 DBD::Pg does not easily support ASCII NULL.  OOPS has only partial
-support for ASCII NULL with PostgreSQL: don't have ASCII NULL in your 
-class names.
+support for ASCII NULL with PostgreSQL.  Everthing works, but don't
+have ASCII NULL in your class names.
 
 =item Circular references sometimes break
 
@@ -712,13 +697,12 @@ OOPS mostly allows you to make circular self-references:
  $x = \$x;
 
 In some (rare) cases circular self-references sometimes break.	Since
-I can't think on any good reason to make a circular self-reference, I've
-left this hanging.
+I can't think on any good reason to make a circular self-reference, I'm
+not going to fix this bug.
 
 =item Long hash keys
 
-The database schema for OOPS does not support huge hash keys in 
-RDBMS backends.
+The database schema for OOPS does not support huge hash keys.
 
 =back
 
@@ -762,6 +746,9 @@ and L<http://rt.perl.org/rt3/Ticket/Display.html?id=22571>.  OOPS
 fully loads arrays into memory to work-around this problem.  This isn't
 a big deal unless you've got big arrays.  
 
+This was fixed in perl 5.10, but OOPS does not yet take advantage of
+tied arrays.
+
 =item SQLite and perl's malloc().
 
 If SQLite is used with a perl that has been compiled to use perl's
@@ -774,7 +761,7 @@ FreeBSD uses perl's C<malloc()>.
 
 =head1 SCHEMA VERSIONS
 
-As OOPS is developed, the schema that OOPS uses changes.  
+As OOPS is developed, the database schema that OOPS uses changes.
 
 OOPS notices if the version of the schema in the DBMS is different than
 the version the code currently supports.  When this happens there are
@@ -795,7 +782,8 @@ Use L<OOPS::GC> to mop up the leak.
 
 Previous versions of OOPS have had bugs that caused the reference
 counts on the persistent data to become inaccurate.  Use
-L<OOPS::Fsck> to fix such problems.
+L<OOPS::Fsck> to fix such problems.  Do this before once, before
+using L<OOPS::GC>.
 
 =head1 FUTURE DIRECTIONS
 
@@ -1184,123 +1172,28 @@ your configuration.
 Beware mysql logging.  On Debian unstable, the default configuration
 for mysql used to log every SQL statement.  Running the test suite to
 completion will generate several gigabytes of log file.  Running out of
-disk space will cause the tests to fail.  On DragonflyBSD (FreeBSD 4.9)
+disk space will cause the tests to fail.  On DragonflyBSD
 the default mysql configuration includes making replication master logs.
 
 =head1 THE COMPETITION
 
 There are a number of other modules that make perl objects persistent.
-For each module, I'll provide a sentence or two that explains why I wrote 
-OOPS rather than using that one.
 
-OOPS does not require any schema definition.  Most other persistence
-package requires schema definition and allows the nature of the underlying
-RDBMS to show in both the kinds of objects you can use and how you
-use them.  OOPS tries to let you work with perl objects without 
-concerning yourself about how they'll be stored persistently.
-
-=over 4
-
-=item Persistence::Object::Postgres
-
-Uses Data::Dumper to serialize objects into BLOBs.  Cannot handle
-cross-linking.	No query support.
-
-=item pop
-
-Only supports Sybase.  Uses a fixed schema defined in XML.
-
-=item SPOPS
-
-Objects are HASHes, values are scalars only (except sometimes when
-using the LDAP backend).  No nesting.  Auto-discovers keys from database
-columns.  Has hooks for DBI, LDAP, and custom backends.
-
-=item DBIx::RecordSet
-
-Thin layer on top of DBI.  Removes much pain from using DBI.
-Does not change basic relationship to data -- still relational.
-
-=item Object::Transaction
-
-Uses Storable to preserve objects in files.  No query support.
-No cross-linking.  Lightweight.  Transactions.
-
-=item Class::DBI
-
-Must define schema and relationships to RDBMS.	Accessor methods.  
-Doesn't support many2many.  Close tie to underlying RDBMS. 
-
-=item Alzabo
-
-Must define schema and relationships as relates to RDBMS.
-Close tie to underlying RDBMS.	Can help create RDBMS schema.
-Complex.  Can cache database rows.
-
-=item Tangram / T2
-
-Must define schema.  
-RDBMS schema is created from perl schema.
-Can automatically follow references (T2).
-
-=item Rose::DB::Object
-
-Must define schema in package files.  
-RDBMS schema is created from perl schema.
-Operations are straightforward mappings to SQL.
-
-=item DBM::Deep
-
-DBM::Deep handles deep and cross-linked data.  It does not have support
-for queries or transactions.
-
-=item Pixie
-
-Less transparent.  Requires user to remember a cookie to
-retrieve objects.  Cannot handle cross-linking of objects?
-No query support?
-
-=item MLDBM / Tie::MLDBM / MLDBM::Easy / MLDBM::Sync
-
-Uses Data::Dumper or Storable or such to serialize objects and store
-them as strings.  Lock granularity is the whole file.  No query support.
-Only one (or two with MLDBM::Easy) level of access is automated.
-
-=item ObjStore
-
-Proprietary.  Not as transparent as OOPS.
-
-=item see also
+Other object persistence solutions either store data in blobs that
+cannot be querried or they they're a mapping from a relation database
+into perl data that does not allow arbitrary data to be stored.
 
 L<http://poop.sourceforge.net/> has an overview of options.
 
-=back
-
 =head1 EXAMPLE PROGRAMS
 
-The following applications uses OOPS:
+The following applications use OOPS:
 L<Qpsmtpd::Plugin::Quarantine> 
 
 =head1 LICENSE
 
-This software is available with and without the GPL: please write if
-you need a non-GPL license.  All submissions of patches must come with
-a copyright grant so that David Sharnoff remains able to change the
-license on OOPS as he sees fit.
-
 Copyright(C) 2004-2006 David Muir Sharnoff <muir@idiom.org>
+Copyright(C) 2012 Google, Inc
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
+OOPS may be used, modifified and redistributed on the same terms
+as Perl itself.

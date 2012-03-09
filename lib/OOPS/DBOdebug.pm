@@ -65,8 +65,10 @@ sub new
 	$self->output("Connect");
 	$self->{lastq} = \$lastq;
 	push(@OOPS::transaction_rollback, sub {
-		print STDERR "Last query before rollback: ${$self->{lastq}}\n"
-			unless ${$self->{lastq}} =~ /^(idle|disconnect)$/
+		my $lq = ${$self->{lastq}};
+		$lq = "<UNDEF>" unless defined $lq;
+		print STDERR "Last query before rollback: $lq\n"
+			unless $lq =~ /^(idle|disconnect)$/
 	}) if $OOPS::transaction_tries;
 	return $self;
 }
@@ -232,6 +234,7 @@ sub preformat
 		}
 		$display .= shift(@q);
 	}
+	$display = "<UNDEF>" unless defined $display;
 	$display =~ s/\s+$//;
 	return $display;
 }
@@ -248,7 +251,7 @@ sub output
 {
 	my $self = shift;
 	my $code = shift;
-	my $stuff = join('', @_);
+	my $stuff = join('', map { defined $_ ? $_ : '<UNDEF>' } @_);
 	$stuff =~ s/^\s+//;
 	if ($ENV{OOPS_DEBUGLOG}) {
 		flock(DBOdebug, LOCK_EX);

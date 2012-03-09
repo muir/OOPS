@@ -9,14 +9,14 @@ use aliased 'Proc::JobQueue::Command';
 use Proc::JobQueue::BackgroundQueue;
 
 # list backends to test
-my @db = qw(mysql sqlite sqlite2);
+my @db = qw(mysql sqlite sqlite2 pg);
 
 # number at once
-my $n = 3;
+my $n = 6;
 
 my $results = "results";
 
-my $keep = @ARGV;
+my $limit = $ARGV[0];
 
 my %db = (
 	mysql	=> "DBI:mysql:database=rectangle;host=localhost",
@@ -50,14 +50,17 @@ my $queue = Proc::JobQueue::BackgroundQueue->new(jobs_per_host => $n);
 for my $t (read_dir("t")) {
 	next unless $t =~ /\.t$/;
 	for my $db (@db) {
-		if ($keep && -e "$results/$db.$t") {
+		if ($limit && -e "$results/$db.$t") {
+			next;
+		}
+		if ($limit && "$db.$t" !~ qr/$limit/) {
 			next;
 		}
 		unlink("$results/$db.$t");
 		my $dsn = $db{$db};
 		$counter++;
 		$dsn =~ s/XXXX/$counter/;
-		my $job = Command->new("env OOPSTEST_DSN=$dsn OOPSTEST_PREFIX=$counter $time $perl -Ilib t/$t > $results/$db.$t 2>&1");
+		my $job = Command->new("env 'OOPSTEST_DSN=$dsn' OOPSTEST_PREFIX=$counter $time $perl -Ilib t/$t > $results/$db.$t 2>&1");
 		$queue->add($job);
 	}
 }

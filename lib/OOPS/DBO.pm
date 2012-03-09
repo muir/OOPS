@@ -71,6 +71,7 @@ sub learn_queries
 	my ($dbo, $Q) = @_;
 	while ($Q =~ /\G\t\t([a-z]\w*):((?:\s+\d+)*)\s*(#.*)?\n/gc) {
 		my ($qn, $binary_list, $comment) = ($1, $2);
+		$dbo->{queries}{$qn} = "";
 		while ($Q =~ /\G\t\t\t(.*)\n/gc) {
 			$dbo->{queries}{$qn} .= $1."\n";
 		}
@@ -79,10 +80,20 @@ sub learn_queries
 	}
 }
 
-sub dbms
+sub dbiconnect
 {
-	my ($pkg, $args) = @_;
+	my ($pkg, %a) = @_;
+	my $args = \%a;
+	if (ref($pkg) && ! %a) {
+		$args = $pkg->{args} || $pkg;
+	}
 	my $database = $args->{dbi_dsn} || $args->{DBI_DSN} || $args->{database};
+	my $user = $args->{user} || $args->{username} || $args->{USER} || $args->{USERNAME};
+	my $password = $args->{pass} || $args->{password} || $args->{PASS} || $args->{PASSWORD};
+	my $prefix = $args->{table_prefix} || $args->{TABLE_PREFIX} || $ENV{OOPS_PREFIX} || '';
+	$user = $user || $ENV{OOPS_USER} || $ENV{DBI_USER};
+	$password = $password || $ENV{OOPS_PASS} || $ENV{DBI_PASS};
+
 	if (! defined($database)) {
 		if (defined($ENV{OOPS_DSN})) {
 			$database = $ENV{OOPS_DSN};
@@ -101,7 +112,6 @@ sub dbms
 	die "no database specified" unless $database;
 	my $dbms = "\L$1";
 	require "OOPS/$dbms.pm";
-print STDERR "DBMS=$dbms\n";
 
 	unless ($loaded{$dbms}++) {
 		my $f = can("OOPS::$dbms", "deadlock_rx") || die;
@@ -109,26 +119,7 @@ print STDERR "DBMS=$dbms\n";
 		@deadlock_rx{@dl_rx} = ($dbms) x @dl_rx;
 		my $rx = join('|', keys %deadlock_rx);
 		$OOPS::transfailrx = qr/$rx/;
-print STDERR "TFRX=$OOPS::transfailrx\n";
 	}
-
-	return $dbms;
-}
-
-sub dbiconnect
-{
-	my ($pkg, %a) = @_;
-	my $args = \%a;
-	if (ref($pkg) && ! %a) {
-		$args = $pkg->{args} || $pkg;
-	}
-	my $database = $args->{dbi_dsn} || $args->{DBI_DSN} || $args->{database};
-	my $dbms = $pkg->dbms($args);
-	my $user = $args->{user} || $args->{username} || $args->{USER} || $args->{USERNAME};
-	my $password = $args->{pass} || $args->{password} || $args->{PASS} || $args->{PASSWORD};
-	my $prefix = $args->{table_prefix} || $args->{TABLE_PREFIX} || $ENV{OOPS_PREFIX} || '';
-	$user = $user || $ENV{OOPS_USER} || $ENV{DBI_USER};
-	$password = $password || $ENV{OOPS_PASS} || $ENV{DBI_PASS};
 
 	my $dbh;
 	unless ($args->{no_dbh}) {
@@ -197,7 +188,7 @@ sub clean_query
 		$query = $map{$dbo->{dbms}} || $before;
 		print "Query selected = $query\n" if $OOPS::debug_queries & 16;
 	}
-	$query =~ s/\n/ /g;  # mysql query log is easier to debug
+	$query =~ s/\s\s+/ /g;  # mysql query log is easier to debug
 
 	return $query;
 }
