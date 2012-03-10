@@ -29,6 +29,9 @@
 		With version 9.1, even less auto-conversion happens
 		so 0 != '0'.
 
+		Postgres is no longer tested against the original schmma
+		version.
+
 	SQLite:
 		
 		Error messages for SQLite version 2 have changed a bit.

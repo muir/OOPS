@@ -1,7 +1,7 @@
 
 package OOPS;
 
-our $VERSION = 0.2004;
+our $VERSION = 0.2005;
 our $SCHEMA_VERSION = 1005;
 
 require 5.008002;
@@ -18,7 +18,6 @@ use Carp qw(confess longmess verbose croak longmess);
 use Scalar::Util qw(refaddr reftype blessed weaken);
 use Hash::Util qw(lock_keys);
 use B qw(svref_2object);
-use UNIVERSAL qw(can);
 require OOPS::DBO;
 
 #

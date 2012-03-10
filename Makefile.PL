@@ -6,9 +6,19 @@ WriteMakefile(
 	NAME => 'OOPS',
 	DISTNAME => 'OOPS',
 	VERSION_FROM => 'lib/OOPS.pm',
-	($] >= 5.005 ?
-	    ('ABSTRACT' => 'Store any object in a RDBMS',
-	     'AUTHOR'	=> 'David Muir Sharnoff <muir@idiom.org>') : ()),
+	($] >= 5.005 
+		?	
+			(
+				ABSTRACT	=> 'Store any object in a RDBMS',
+				AUTHOR		=> 'David Muir Sharnoff <cpan@dave.sharnoff.org>',
+				META_MERGE     => {
+					resources  => {
+						repository => 'http://github.com/muir/OOPS',
+					},
+				},
+			) 
+		: ()
+	),
 	dist   => {COMPRESS=>'gzip', SUFFIX=>'gz'},
 	PREREQ_PM => {
 		'DBI' => 1.40,

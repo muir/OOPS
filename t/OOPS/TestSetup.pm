@@ -36,11 +36,18 @@ sub import
 				print "1..0 # skip run this by hand or set \$ENV{OOPSTEST_SLOW}\n";
 				exit;
 			}
-		} elsif ($a =~ /^:(.+)/) {
-			my $dbd = $1;
+		} elsif ($a =~ /^:(-)?(.+)/) {
+			my $dbd = $2;
 			if ($dbi{$dbd}) {
-				$dbicheck = $dbd if ($ENV{OOPSTEST_DSN} && $ENV{OOPSTEST_DSN} =~ /^dbi:$dbd\b/i);
-				push(@supported, $dbi{$dbd});
+				if ($1) {
+					if ($ENV{OOPSTEST_DSN} && $ENV{OOPSTEST_DSN} =~ /^dbi:$dbd\b/i) {
+						print "1..0 # skip this test not for $dbi{$dbd}\n";
+						exit;
+					}
+				} else {
+					$dbicheck = $dbd if ($ENV{OOPSTEST_DSN} && $ENV{OOPSTEST_DSN} =~ /^dbi:$dbd\b/i);
+					push(@supported, $dbi{$dbd});
+				}
 			} else {
 				die "Bad import spec: $a";
 			}

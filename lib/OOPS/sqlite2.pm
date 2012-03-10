@@ -34,8 +34,7 @@ sub lock_object {}
 sub deadlock_rx
 {
 	return (
-		qr/database is locked/,
-		qr/database is locked\(\d+\) at dbdimp\.c line /,
+		qr/database is locked(?:\(\d+\) at dbdimp\.c line )?/,
 		qr/unable to open database file\(\d+\) at dbdimp\.c line/,
 	);
 }

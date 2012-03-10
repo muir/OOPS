@@ -300,7 +300,6 @@ package OOPS::pg::sth;
 
 use strict;
 use warnings;
-use UNIVERSAL qw(can);
 use Carp qw(confess);
 use DBD::Pg qw(:pg_types);
 
@@ -336,7 +335,7 @@ sub AUTOLOAD
 	our $AUTOLOAD;
 	my $a = $AUTOLOAD;
 	$a =~ s/.*:://;
-	my $method = can($self->[0],$a) || can($self->[0], $AUTOLOAD) || confess "cannot find method $a for $self->[0]";
+	my $method = $self->[0]->can($a) || $self->[0]->can($AUTOLOAD) || confess "cannot find method $a for $self->[0]";
 	&$method($self->[0], @_);
 }
 

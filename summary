@@ -10,6 +10,9 @@ my @files = sort(read_dir("results"));
 
 # my $aggregate = TAP::Parser::Aggregator->new;
 foreach my $file (@files) {
+  if (@ARGV) {
+    next unless $file =~ /$ARGV[0]/;
+  }
   my $s =  TAP::Parser::Source->new;
   $s->source([ '/bin/cat', "results/$file" ]);
   my $parser = TAP::Parser->new( { source => $s });

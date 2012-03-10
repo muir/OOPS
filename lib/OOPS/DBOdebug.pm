@@ -43,7 +43,6 @@ package OOPS::DBO::DBIdebug;
 
 use strict;
 use warnings;
-use UNIVERSAL qw(can);
 use Carp qw(confess longmess);
 use POSIX qw(EAGAIN ENOENT EEXIST O_RDWR); 
 use Fcntl qw(LOCK_SH LOCK_EX LOCK_NB LOCK_UN);
@@ -90,7 +89,7 @@ sub AUTOLOAD
 	my $a = $AUTOLOAD;
 	$a =~ s/.*:://;
 	die "USING AUTOLOAD ON $self->{dbh} ->$a()\n";
-	my $method = can($self->{dbh},$a) || can($self->{dbh}, $AUTOLOAD) || confess "cannot find method $a for $self->[0]";
+	my $method = $self->{dbh}->can($a) || $self->{dbh}->can($AUTOLOAD) || confess "cannot find method $a for $self->[0]";
 	my @r;
 	if (wantarray) {
 		@r = &$method($self->{dbh}, @_);

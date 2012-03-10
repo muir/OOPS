@@ -13,7 +13,6 @@ package OOPS::DBO;
 use strict;
 use warnings;
 use Carp;
-use UNIVERSAL qw(can);
 use Scalar::Util qw(weaken);
 require OOPS::DBOdebug;
 require Exporter;
@@ -111,15 +110,6 @@ sub dbiconnect
 		unless $database =~ /^dbi:($backends)\b/i;
 	die "no database specified" unless $database;
 	my $dbms = "\L$1";
-	require "OOPS/$dbms.pm";
-
-	unless ($loaded{$dbms}++) {
-		my $f = can("OOPS::$dbms", "deadlock_rx") || die;
-		my @dl_rx = $f->();
-		@deadlock_rx{@dl_rx} = ($dbms) x @dl_rx;
-		my $rx = join('|', keys %deadlock_rx);
-		$OOPS::transfailrx = qr/$rx/;
-	}
 
 	my $dbh;
 	unless ($args->{no_dbh}) {
@@ -137,12 +127,23 @@ sub dbiconnect
 			if $OOPS::debug_queries & 32;
 	}
 
-	my $tmode = can("OOPS::$dbms", "tmode") || die;
+	require "OOPS/$dbms.pm";
+
+	my $dboclass = "OOPS::$dbms";
+	unless ($loaded{$dbms}++) {
+		my $f = $dboclass->can("deadlock_rx") || die;
+		my @dl_rx = $f->();
+		@deadlock_rx{@dl_rx} = ($dbms) x @dl_rx;
+		my $rx = join('|', keys %deadlock_rx);
+		$OOPS::transfailrx = qr/$rx/;
+	}
+
+	my $tmode = $dboclass->can("tmode") || die;
 	&$tmode(undef, $dbh, $args->{readonly} || 0);
 
 	return $dbh unless wantarray;
 
-	my $new = can("OOPS::$dbms", "new") || die;
+	my $new = $dboclass->can("new") || die;
 	my $dbo = &$new("OOPS::$dbms",
 		table_prefix		=> $prefix,
 		database		=> $database,

@@ -2,7 +2,7 @@
 
 use FindBin;
 use lib $FindBin::Bin;
-use OOPS::TestSetup qw(:slow :filter :mysql :pg :sqlite  Data::Dumper Clone::PP);
+use OOPS::TestSetup qw(:slow :filter :mysql :sqlite  Data::Dumper Clone::PP);
 import Clone::PP qw(clone);
 use OOPS::OOPS1001;
 use Carp qw(confess);

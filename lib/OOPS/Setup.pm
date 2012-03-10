@@ -8,7 +8,6 @@ package OOPS::Setup; # dummy
 
 package OOPS;
 
-use UNIVERSAL;
 use strict;
 use warnings;
 
@@ -75,8 +74,8 @@ sub load_failure
 {
 	my ($oops, $err) = @_;
 
-	print "load_failure($err)\n" if $OOPS::debug_setup;
 	my $nodatarx = $oops->{dbo}->nodata_rx;
+	print "load_failure($err) -- compare to $nodatarx\n" if $OOPS::debug_setup;
 	return 0 unless $err =~ /$nodatarx/;
 
 	die "DBMS not initialized - use auto_initialize or initial_setup()\n" 

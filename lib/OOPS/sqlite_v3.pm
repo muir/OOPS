@@ -30,14 +30,14 @@ sub lock_object {}
 sub deadlock_rx
 {
 	return (
-		qr/database is locked\(\d+\) at dbdimp\.c line /,
+		qr/database is locked(?:\(\d+\) at dbdimp\.c line )?/,
 		qr/unable to open database file\(\d+\) at dbdimp\.c line/,
 	);
 }
 
 sub nodata_rx
 {
-	return qr/no such table: \S+object\(1\) at dbdimp\.c/;
+	return qr/no such table: \S+object(?:\(1\) at dbdimp\.c)?/;
 }
 
 sub initialize

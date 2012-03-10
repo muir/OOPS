@@ -78,13 +78,13 @@ resetall; # --------------------------------------------------
 		COMPARE
 
 		CP_VIRTUAL
-		$tcTODO = "Mysql columns are a bit narrow" if $r1->{dbo}{dbms} eq 'mysql';
+		$::width = $r1->{dbo}{dbms} eq 'mysql' ? 37 : 57;
 		%$root = ();
-		my $x = getref(%$root, 'FOO23' x 57);
-		$root->{'FOO23' x 57} = \$x;
+		my $x = getref(%$root, 'FOO23' x $::width);
+		$root->{'FOO23' x $::width} = \$x;
 		CP_COMMIT
 		CP_COMPARE
-		delete $root->{'FOO23' x 57};
+		delete $root->{'FOO23' x $::width};
 		CP_COMPARE
 		CP_COMMIT
 		COMPARE
