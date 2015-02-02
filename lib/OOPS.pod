@@ -1,19 +1,20 @@
 
 =head1 NAME
- 
- OOPS - Object Oriented Persistent Store
+
+OOPS - Object Oriented Persistent Store
 
 =head1 SYNOPSIS
 
  use OOPS;
 
  transaction(sub {
-	$oops = new OOPS 
-		dbi_dsn => $DBI_DSN, 
-		username => $username, 
+	my $oops = OOPS->new(
+		dbi_dsn => $DBI_DSN,
+		username => $username,
 		password => $password,
 		table_prefix => "MY",
-		readonly => 0;
+		readonly => 0
+        );
 
 	$oops->commit;
 
@@ -60,9 +61,9 @@ RDBMS schema uses four tables: a table of objects, a table of attributes
 (keys and values), a table of large attributes that are too big to fit
 in normal (VARCHAR) columns, and a table of counters.
 
-At this time, OOPS is expecting a web-like work flow: 
+At this time, OOPS is expecting a web-like work flow:
 
- create OOPS instance
+ create an OOPS instance
 
  access some objects
 
@@ -84,11 +85,12 @@ OOPS object.
  use OOPS;
 
  transaction(sub {
-	my $oops = new OOPS 
-		dbi_dsn => 'DBI:mysql:database=MY-DATABASE-NAME;host=localhost', 
-		username => 'MY-USERNAME', 
+	my $oops = OOPS->new(
+		dbi_dsn => 'DBI:mysql:database=MY-DATABASE-NAME;host=localhost',
+		username => 'MY-USERNAME',
 		password => 'MY-PASSWORD',
-		table_prefix => "MY-TABLE-PREFIX";
+		table_prefix => "MY-TABLE-PREFIX"
+    );
 
 	my $p = $oops->{pages}{"/some/path"};
 
@@ -141,7 +143,7 @@ to 0.1004 or later *before* upgrading PostgreSQL to 8.x or later.
 Biggest issue: PostgreSQL runs the test suite more slowly than mysql
 or SQLite.
 
-On rare occaision PostgresSQL will fail with an 
+On rare occasion PostgresSQL will fail with an
 C<ERROR:  duplicate key violates unique constraint>
 error.  If this happens inside a call to C<transaction()> it
 will automatically restart.  You only need to worry about this
@@ -1177,23 +1179,23 @@ the default mysql configuration includes making replication master logs.
 
 =head1 THE COMPETITION
 
-There are a number of other modules that make perl objects persistent.
+There are a number of other modules that make Perl objects persistent.
 
 Other object persistence solutions either store data in blobs that
-cannot be querried or they they're a mapping from a relation database
-into perl data that does not allow arbitrary data to be stored.
+cannot be queried or they are a mapping from a relational database
+into Perl data that does not allow arbitrary data to be stored.
 
-L<http://poop.sourceforge.net/> has an overview of options.
+L<http://poop.sourceforge.net/> has an overview of the options.
 
 =head1 EXAMPLE PROGRAMS
 
 The following applications use OOPS:
-L<Qpsmtpd::Plugin::Quarantine> 
+L<Qpsmtpd::Plugin::Quarantine>
 
 =head1 LICENSE
 
 Copyright(C) 2004-2006 David Muir Sharnoff <muir@idiom.org>
 Copyright(C) 2012 Google, Inc
 
-OOPS may be used, modifified and redistributed on the same terms
+OOPS may be used, modified and redistributed on the same terms
 as Perl itself.
